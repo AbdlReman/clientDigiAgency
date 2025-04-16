@@ -1,0 +1,28 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "The Future of Web Development in 2025",
+      "excerpt": "Explore the latest trends and technologies shaping the future of web development.",
+      "author": "John Smith",
+      "date": "2024-03-15",
+      "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085"
+    },
+    {
+      "id": 2,
+      "title": "Why UX Design Matters More Than Ever",
+      "excerpt": "Understanding the critical role of user experience in modern digital products.",
+      "author": "Sarah Johnson",
+      "date": "2024-03-10",
+      "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
+    },
+    {
+      "id": 3,
+      "title": "Digital Marketing Strategies for 2025",
+      "excerpt": "Learn about effective digital marketing approaches for the coming year.",
+      "author": "Mike Wilson",
+      "date": "2024-03-05",
+      "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f"
+    }
+  ]
+}

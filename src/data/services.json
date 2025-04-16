@@ -1,0 +1,28 @@
+{
+  "services": [
+    {
+      "id": 1,
+      "title": "Web Development",
+      "description": "Custom web solutions built with cutting-edge technologies to help your business thrive in the digital world.",
+      "icon": "Code2"
+    },
+    {
+      "id": 2,
+      "title": "Digital Marketing",
+      "description": "Strategic marketing campaigns that drive results and connect with your target audience effectively.",
+      "icon": "Megaphone"
+    },
+    {
+      "id": 3,
+      "title": "UI/UX Design",
+      "description": "Beautiful, intuitive designs that enhance user experience and strengthen your brand identity.",
+      "icon": "Palette"
+    },
+    {
+      "id": 4,
+      "title": "Mobile Development",
+      "description": "Native and cross-platform mobile applications that engage users and drive business growth.",
+      "icon": "Smartphone"
+    }
+  ]
+}
