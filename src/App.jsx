@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
+import EditBlog from "./pages/EditBlog";
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route
-            path="/blog/:id"
+            path="/blog/:slug"
             element={<BlogDetail posts={blogData.posts} />}
           />
           {/* <Route path="/dashboard" element={<Dashboard />} />
@@ -36,6 +37,7 @@ function App() {
               <Route path="home" element={<Dashboard />} />
               <Route path="create-blog" element={<CreateBlog />} />
               <Route path="get-blogs" element={<GetBlogs />} />
+              <Route path="edit-blog/:slug" element={<EditBlog />} />
             </Route>
           </Route>
         </Routes>

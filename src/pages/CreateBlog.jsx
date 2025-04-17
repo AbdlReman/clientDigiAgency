@@ -9,6 +9,7 @@
 //   const [image, setImage] = useState('');
 //   const [imagePreview, setImagePreview] = useState('');
 //   const [content, setContent] = useState('');
+//   const [submitted, setSubmitted] = useState(false);
 
 //   const generateSlug = (text: string) => {
 //     return text
@@ -24,7 +25,7 @@
 
 //     const formData = new FormData();
 //     formData.append('file', file);
-//     formData.append('upload_preset', 'ml_default'); // replace with your Cloudinary upload preset
+//     formData.append('upload_preset', 'blogApp'); // replace with your Cloudinary upload preset
 
 //     try {
 //       const res = await fetch('https://api.cloudinary.com/v1_1/dndfxkc7j/image/upload', {
@@ -41,6 +42,7 @@
 
 //   const handleSubmit = (e: React.FormEvent) => {
 //     e.preventDefault();
+//     setSubmitted(true); // Show the submitted data
 //     console.log({ title, slug, author, date, image, content });
 //   };
 
@@ -138,66 +140,93 @@
 
 //         <button type="submit" className="submit-btn">Publish Post</button>
 //       </form>
+//       {submitted && (
+//   <div className="submitted-data">
+//     <h2>Submitted Blog Preview</h2>
+//     <p><strong>Title:</strong> {title}</p>
+//     <p><strong>Slug:</strong> {slug}</p>
+//     <p><strong>Author:</strong> {author}</p>
+//     <p><strong>Date:</strong> {date}</p>
+//     {image && <img src={image} alt="Uploaded" style={{ maxWidth: '200px', marginBottom: '1rem' }} />}
+//     <div>
+//       <strong>Content:</strong>
+//       <div dangerouslySetInnerHTML={{ __html: content }} />
 //     </div>
+//   </div>
+// )}
+
+//     </div>
+
 //   );
 // };
 
 // export default CreateBlog;
-import React, { useState } from 'react';
-import { Editor } from '@tinymce/tinymce-react';
+
+import React, { useState } from "react";
+import { Editor } from "@tinymce/tinymce-react";
+import { useBlog } from "../components/context/BlogContext";
 
 const CreateBlog = () => {
-  const [title, setTitle] = useState('');
-  const [slug, setSlug] = useState('');
-  const [author, setAuthor] = useState('');
-  const [date, setDate] = useState('');
-  const [image, setImage] = useState('');
-  const [imagePreview, setImagePreview] = useState('');
-  const [content, setContent] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const { createBlog } = useBlog();
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [author, setAuthor] = useState("");
+  const [date, setDate] = useState("");
+  const [image, setImage] = useState("");
+  const [imagePreview, setImagePreview] = useState("");
+  const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const generateSlug = (text: string) => {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-');
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'ml_default'); // replace with your Cloudinary upload preset
+    formData.append("file", file);
+    formData.append("upload_preset", "blogApp");
 
     try {
-      const res = await fetch('https://api.cloudinary.com/v1_1/dndfxkc7j/image/upload', {
-        method: 'POST',
-        body: formData,
-      });
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dndfxkc7j/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       const data = await res.json();
       setImage(data.secure_url);
       setImagePreview(data.secure_url);
     } catch (error) {
-      console.error('Image upload failed:', error);
+      console.error("Image upload failed:", error);
     }
   };
 
-
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true); // Show the submitted data
-    console.log({ title, slug, author, date, image, content });
-  };
-  
+    setLoading(true);
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value;
-    setTitle(newTitle);
-    setSlug(generateSlug(newTitle));
+    try {
+      const user = JSON.parse(localStorage.getItem("user")); // Parse the user object
+      const token = user?.token; // Access the token property
+
+      if (!token) throw new Error("User token not found. Please log in again.");
+
+      await createBlog({ title, slug, author, date, image, content }, token);
+
+      // Reset form
+      setTitle("");
+      setSlug("");
+      setAuthor("");
+      setDate("");
+      setImage("");
+      setImagePreview("");
+      setContent("");
+      alert("Blog created successfully!");
+    } catch (error) {
+      alert(error.message || "Failed to create blog");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -210,7 +239,10 @@ const CreateBlog = () => {
             type="text"
             id="title"
             value={title}
-            onChange={handleTitleChange}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              setSlug(e.target.value.toLowerCase().replace(/ /g, "-")); // auto generate slug
+            }}
             placeholder="Enter blog title"
             required
           />
@@ -223,7 +255,7 @@ const CreateBlog = () => {
             id="slug"
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
-            placeholder="Slug will be generated automatically"
+            placeholder="Auto-generated or custom slug"
             required
           />
         </div>
@@ -272,39 +304,41 @@ const CreateBlog = () => {
               height: 400,
               menubar: false,
               plugins: [
-                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                "advlist",
+                "autolink",
+                "lists",
+                "link",
+                "image",
+                "charmap",
+                "preview",
+                "anchor",
+                "searchreplace",
+                "visualblocks",
+                "code",
+                "fullscreen",
+                "insertdatetime",
+                "media",
+                "table",
+                "code",
+                "help",
+                "wordcount",
               ],
-              toolbar: 'undo redo | blocks | ' +
-                'bold italic forecolor | alignleft aligncenter ' +
-                'alignright alignjustify | bullist numlist outdent indent | ' +
-                'removeformat | help',
+              toolbar:
+                "undo redo | blocks | " +
+                "bold italic forecolor | alignleft aligncenter " +
+                "alignright alignjustify | bullist numlist outdent indent | " +
+                "removeformat | help",
             }}
             value={content}
             onEditorChange={(content) => setContent(content)}
           />
         </div>
 
-        <button type="submit" className="submit-btn">Publish Post</button>
+        <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? "Publishing..." : "Publish Post"}
+        </button>
       </form>
-      {submitted && (
-  <div className="submitted-data">
-    <h2>Submitted Blog Preview</h2>
-    <p><strong>Title:</strong> {title}</p>
-    <p><strong>Slug:</strong> {slug}</p>
-    <p><strong>Author:</strong> {author}</p>
-    <p><strong>Date:</strong> {date}</p>
-    {image && <img src={image} alt="Uploaded" style={{ maxWidth: '200px', marginBottom: '1rem' }} />}
-    <div>
-      <strong>Content:</strong>
-      <div dangerouslySetInnerHTML={{ __html: content }} />
     </div>
-  </div>
-)}
-
-    </div>
-    
   );
 };
 
