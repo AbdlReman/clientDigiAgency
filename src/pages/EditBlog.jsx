@@ -6,6 +6,7 @@ import slugify from "slugify";
 import { useBlog } from "../components/context/BlogContext";
 
 const EditBlog = () => {
+  const API = import.meta.env.VITE_BACKEND_URL;
   const { slug } = useParams();
   const navigate = useNavigate();
   const { blogs, updateBlog } = useBlog();
@@ -28,9 +29,7 @@ const EditBlog = () => {
           });
           setImagePreview(existingBlog.image);
         } else {
-          const response = await axios.get(
-            `http://localhost:5174/api/blogs/${slug}`
-          );
+          const response = await axios.get(`${API}/api/blogs/${slug}`);
           setBlogData({
             ...response.data,
             date: response.data.date.split("T")[0],
@@ -77,7 +76,7 @@ const EditBlog = () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       await updateBlog(slug, blogData, user?.token);
-      navigate("/blogs");
+      navigate("/dashboard/home");
       alert("Blog updated successfully!");
     } catch (error) {
       alert(error.message || "Failed to update blog");

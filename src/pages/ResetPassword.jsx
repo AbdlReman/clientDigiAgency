@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../components/context/AuthContext";
 
 const ResetPassword = () => {
   const { token } = useParams(); // Get token from the URL
+  const navigate = useNavigate();
   const { resetPassword } = useAuth(); // Context API function
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -13,6 +14,7 @@ const ResetPassword = () => {
     try {
       const res = await resetPassword(token, newPassword, confirmNewPassword);
       alert(res.message);
+      navigate("/login");
     } catch (err) {
       alert(err?.response?.data?.message || err?.message || "Reset failed");
     }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../components/context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const { login } = useAuth();
@@ -36,6 +36,10 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        <Link to="/forgot-password" className="forgot-password-link">
+          Forgot Password?
+        </Link>
+
         <button type="submit">Login</button>
       </form>
     </div>

@@ -64,6 +64,7 @@ import axios from "axios";
 import { useBlog } from "../components/context/BlogContext";
 
 const BlogDetail = () => {
+  const API = import.meta.env.VITE_BACKEND_URL;
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -74,9 +75,7 @@ const BlogDetail = () => {
     const fetchPost = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `http://localhost:5174/api/blogs/${slug}`
-        );
+        const response = await axios.get(`${API}/api/blogs/${slug}`);
 
         if (!response.data) {
           throw new Error("Post not found");
@@ -150,8 +149,8 @@ const BlogDetail = () => {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
         <div className="blog-navigation">
-          <Link to="/blog" className="btn">
-            Back to Blog
+          <Link to="/" className="btn">
+            Back to Home
           </Link>
         </div>
       </div>

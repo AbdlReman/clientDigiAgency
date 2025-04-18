@@ -11,7 +11,7 @@
 //   // Fetch all blogs
 //   const fetchBlogs = async () => {
 //     try {
-//       const response = await axios.get("http://localhost:5174/api/blogs");
+//       const response = await axios.get("${API}/api/blogs");
 //       setBlogs(response.data);
 //       setLoading(false);
 //     } catch (err) {
@@ -30,7 +30,7 @@
 //     };
 
 //     const response = await axios.post(
-//       "http://localhost:5174/api/blogs/create",
+//       "${API}/api/blogs/create",
 //       blogData,
 //       config
 //     );
@@ -69,6 +69,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 const BlogContext = createContext();
+const API = import.meta.env.VITE_BACKEND_URL;
 
 export const BlogProvider = ({ children }) => {
   const [blogs, setBlogs] = useState([]);
@@ -79,7 +80,7 @@ export const BlogProvider = ({ children }) => {
   const fetchBlogs = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5174/api/blogs");
+      const response = await axios.get(`${API}/api/blogs`);
       setBlogs(response.data);
       setError(null);
     } catch (err) {
@@ -99,7 +100,7 @@ export const BlogProvider = ({ children }) => {
       };
 
       const response = await axios.post(
-        "http://localhost:5174/api/blogs/create",
+        `${API}/api/blogs/create`,
         blogData,
         config
       );
@@ -120,7 +121,7 @@ export const BlogProvider = ({ children }) => {
         },
       };
 
-      await axios.delete(`http://localhost:5174/api/blogs/${slug}`, config);
+      await axios.delete(`${API}/api/blogs/${slug}`, config);
       setBlogs(blogs.filter((blog) => blog.slug !== slug));
     } catch (err) {
       setError(err.response?.data?.error || "Failed to delete blog");
@@ -138,7 +139,7 @@ export const BlogProvider = ({ children }) => {
       };
 
       const response = await axios.put(
-        `http://localhost:5174/api/blogs/${slug}`,
+        `${API}/api/blogs/${slug}`,
         blogData,
         config
       );
