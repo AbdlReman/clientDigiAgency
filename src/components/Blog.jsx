@@ -64,7 +64,7 @@ const Blog = () => {
                 <p
                   className="excerpt"
                   dangerouslySetInnerHTML={{
-                    __html: post.content.substring(0, 100) + "...",
+                    __html: post.content.substring(0, 110) + "...",
                   }}
                 ></p>
                 <p>By {post.author}</p>

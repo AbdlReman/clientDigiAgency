@@ -113,7 +113,7 @@ body {
   display: flex;
   align-items: center;
   background: linear-gradient(rgba(10, 97, 193, 0.1), rgba(10, 97, 193, 0.1)),
-    url('https://images.unsplash.com/photo-1522071820081-009f0129c71c') center/cover;
+    url('https://res.cloudinary.com/dndfxkc7j/image/upload/v1745227299/z6ka0vvve7fxqxguv1f5.png') center/cover;
 }
 
 .hero-content {
